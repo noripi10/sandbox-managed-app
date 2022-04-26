@@ -1,6 +1,8 @@
 {
-  "extends": ["@react-native-community"],
+  "parser": "@typescript-eslint/parser",
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "@react-native-community", "prettier"],
   "rules": {
-    "react-native/no-inline-styles": 0
+    "react-native/no-inline-styles": 0,
+    "react/react-in-jsx-scope": 0 // react18関係でエラーになる？？
   }
 }
