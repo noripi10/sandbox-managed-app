@@ -1,7 +1,8 @@
 import { FC } from 'react';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { AnimationFlatListScreen } from '../screens';
+import { AnimationFlatListScreen } from '@/screens';
 
 export type NativeStackParamList = {
   Animated: undefined;

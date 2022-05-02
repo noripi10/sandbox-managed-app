@@ -11,6 +11,8 @@ import {
   Text,
   View,
 } from 'react-native';
+
+import { faker } from '@faker-js/faker';
 import Animated, {
   Extrapolate,
   interpolate,
@@ -19,8 +21,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-
-import { faker } from '@faker-js/faker';
 
 const WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = WIDTH * 0.95;

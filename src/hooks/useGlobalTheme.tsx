@@ -1,9 +1,11 @@
 import { useCallback, useLayoutEffect, useMemo } from 'react';
 import { Appearance } from 'react-native';
+
+import { useColorMode } from 'native-base';
+
 import { StatusBar } from 'expo-status-bar';
 
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
-import { useColorMode } from 'native-base';
 
 export const useGlobalTheme = () => {
   const { colorMode, setColorMode } = useColorMode();

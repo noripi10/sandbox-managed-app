@@ -1,8 +1,61 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "@react-native-community", "prettier"],
+  "plugins": ["import"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    // TypeScript の import を eslint-import-resolver-typescript で解決
+    "import/resolver": {
+      "typescript": {
+        "project": "."
+      }
+    }
+  },
   "rules": {
-    "react-native/no-inline-styles": 0,
-    "react/react-in-jsx-scope": 0 // react18関係でエラーになる？？
+    "react-native/no-inline-styles": "off",
+    // react18関係でエラーになる!?
+    "react/react-in-jsx-scope": "off",
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "object", "type"],
+        "newlines-between": "always",
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "pathGroups": [
+          {
+            "pattern": "{react,react-native}",
+            "group": "builtin",
+            "position": "before"
+          },
+          {
+            "pattern": "native-base",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "expo**",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "after"
+          }
+        ]
+      }
+    ]
   }
+  // "overrides": [
+  //   {
+  //     "files": ["src/**/*.{js,jsx,ts,tsx}"],
+  //     "rules": {}
+  //   }
+  // ]
 }
