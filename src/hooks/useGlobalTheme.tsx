@@ -23,9 +23,12 @@ export const useGlobalTheme = () => {
   );
 
   useLayoutEffect(() => {
-    Appearance.addChangeListener(lisner);
-    return () => Appearance.removeChangeListener(lisner);
-  }, [lisner]);
+    const nativeTheme = Appearance.getColorScheme();
+    setColorMode(nativeTheme);
+
+    const unsubscribe = Appearance.addChangeListener(lisner);
+    return () => unsubscribe.remove();
+  }, [lisner, setColorMode]);
 
   return { naviTheme, nbTheme: colorMode, AutoStatusBar };
 };

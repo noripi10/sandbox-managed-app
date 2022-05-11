@@ -12,6 +12,10 @@ import {
   View,
 } from 'react-native';
 
+import { Box } from 'native-base';
+
+import { LinearGradient } from 'expo-linear-gradient';
+
 import { faker } from '@faker-js/faker';
 import Animated, {
   Extrapolate,
@@ -41,7 +45,7 @@ type ItemProp = typeof list[0];
 const AnimatedFlatlist = Animated.createAnimatedComponent<FlatListProps<ItemProp>>(FlatList);
 
 const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> = ({ item, index, y }) => {
-  const [itemWidth, setItemWidth] = useState(ITEM_WIDTH);
+  const [, setItemWidth] = useState(ITEM_WIDTH);
 
   const animatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -65,27 +69,34 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
   };
 
   useEffect(() => {
-    Dimensions.addEventListener('change', dimensionsChangeEvent);
+    const unsubscribe = Dimensions.addEventListener('change', dimensionsChangeEvent);
 
-    return () => Dimensions.removeEventListener('change', dimensionsChangeEvent);
+    return () => unsubscribe.remove();
   }, []);
 
   return (
-    <>
-      <Animated.View
-        style={[
-          {
-            width: itemWidth,
-            height: ITEM_HEIGHT,
-            backgroundColor: 'white',
-            margin: ITEM_MARGIN,
-            borderRadius: 8,
-            justifyContent: 'center',
-          },
-          animatedStyle,
-        ]}
+    <Animated.View
+      style={[
+        {
+          height: ITEM_HEIGHT,
+          margin: ITEM_MARGIN,
+        },
+        animatedStyle,
+      ]}
+    >
+      <LinearGradient
+        style={{ flex: 1, borderRadius: 8 }}
+        colors={['#193ab2', '#5db6ff']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
-        <View style={{ flexDirection: 'row' }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
           <View style={{ paddingHorizontal: 16 }}>
             <Image source={{ uri: item.avatar }} style={{ width: 56, height: 56, borderRadius: 28 }} />
           </View>
@@ -95,8 +106,8 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
             <Text>{item.phone}</Text>
           </View>
         </View>
-      </Animated.View>
-    </>
+      </LinearGradient>
+    </Animated.View>
   );
 };
 
@@ -109,13 +120,7 @@ export default function AnimationFlatListScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          width: '100%',
-        }}
-      >
+      <Box>
         <AnimatedFlatlist
           indicatorStyle={'black'}
           contentContainerStyle={{ width: WIDTH }}
@@ -124,7 +129,7 @@ export default function AnimationFlatListScreen() {
           renderItem={({ item, index }) => <RenderItem item={item} index={index} y={y} />}
           onScroll={scrollHandler}
         />
-      </View>
+      </Box>
     </SafeAreaView>
   );
 }
@@ -132,7 +137,6 @@ export default function AnimationFlatListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
