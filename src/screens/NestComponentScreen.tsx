@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView } from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
 import { Menu, Box, Text } from 'native-base';
 
@@ -9,7 +9,7 @@ import { NestMenu } from '@/components/NestMenu';
 
 export default function NestComponentScreen() {
   return (
-    <Box flex={1}>
+    <SafeAreaView style={styles.container}>
       <Box flex={1} p={4}>
         <Text>CustomNestComponent</Text>
         <ScrollView>
@@ -64,6 +64,12 @@ export default function NestComponentScreen() {
           <Menu.Item>Cookie</Menu.Item>
         </Menu>
       </Box>
-    </Box>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
