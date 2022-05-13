@@ -1,0 +1,52 @@
+{
+  "cli": {
+    "version": ">= 0.52.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "releaseChannel": "development",
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "ios": {
+        "buildConfiguration": "Debug"
+      },
+      "env": {
+        "ENV_BUILD_MODE": "development"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "releaseChannel": "preview",
+      "android": {
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "ios": {
+        "buildConfiguration": "Debug"
+      },
+      "env": {
+        "ENV_BUILD_MODE": "preview"
+      }
+    },
+    "production": {
+      "releaseChannel": "production",
+      "ios": {
+        "buildConfiguration": "Release"
+      },
+      "android": {},
+      "env": {
+        "ENV_BUILD_MODE": "production"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {},
+      "ios": {
+        "ascAppId": ""
+      }
+    }
+  }
+}

@@ -1268,7 +1268,7 @@
   resolved "https://registry.yarnpkg.com/@expo/config-types/-/config-types-45.0.0.tgz#963c2fdce8fbcbd003758b92ed8a25375f437ef6"
   integrity sha512-/QGhhLWyaGautgEyU50UJr5YqKJix5t77ePTwreOVAhmZH+ff3nrrtYTTnccx+qF08ZNQmfAyYMCD3rQfzpiJA==
 
-"@expo/config@6.0.23", "@expo/config@^6.0.14", "@expo/config@~6.0.23":
+"@expo/config@6.0.23", "@expo/config@^6.0.14", "@expo/config@^6.0.23", "@expo/config@~6.0.23":
   version "6.0.23"
   resolved "https://registry.yarnpkg.com/@expo/config/-/config-6.0.23.tgz#512514b5fd5d5e9d2787bf04a0e795cca470c3c3"
   integrity sha512-htanDTaSgtnBrVhAfjVsj8h/t95Kj4clR/nPCm8Puf8H2M7zW6XLV4XV4Pp1fvGZxzBSP+yod+7SBhwa44Q/jQ==
@@ -4263,6 +4263,11 @@ domutils@^2.8.0:
     dom-serializer "^1.0.1"
     domelementtype "^2.2.0"
     domhandler "^4.2.0"
+
+dotenv@^16.0.1:
+  version "16.0.1"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.1.tgz#8f8f9d94876c35dac989876a5d3a82a267fdce1d"
+  integrity sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==
 
 earcut@2.1.1:
   version "2.1.1"

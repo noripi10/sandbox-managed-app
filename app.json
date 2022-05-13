@@ -14,17 +14,22 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
+    "jsEngine": "hermes",
     "ios": {
       "supportsTablet": true,
       "requireFullScreen": true,
-      "bundleIdentifier": "com.hiroapp.sandboxmanagedapp"
+      "bundleIdentifier": "com.hiroapp.sandboxmanagedapp",
+      "buildNumber": "1",
+      "jsEngine": "hermes"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.hiroapp.sandboxmanagedapp"
+      "package": "com.hiroapp.sandboxmanagedapp",
+      "versionCode": 1,
+      "jsEngine": "hermes"
     },
     "web": {
       "favicon": "./assets/favicon.png"

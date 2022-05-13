@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { Box, Center, Flex, HStack, Text } from 'native-base';
@@ -29,8 +29,44 @@ const STICK_SIZE = 40;
 const STICK_AVAILABLE_AREA = (STICK_RADIUS - STICK_SIZE) / 2;
 
 const WebGlScreen: React.FC<Props> = () => {
+  const [Camera, setCamera] = useState<PerspectiveCamera | undefined>();
+  const [isMove, setMove] = useState<boolean>(false);
+  const [stateX, setStateX] = useState(0);
+  const [stateY, setStateY] = useState(0);
+
   const x = useSharedValue(0);
   const y = useSharedValue(0);
+
+  const move = (stickX: number, stickY: number) => {
+    if (Camera) {
+      if (stickX + stickY === 0) {
+        setMove(false);
+        return;
+      }
+      setMove(true);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line no-undef
+    let timerId: NodeJS.Timer;
+
+    if (Camera && isMove) {
+      timerId = setInterval(() => {
+        if (stateX < 0) Camera.position.x -= 0.2;
+        if (stateX > 0) Camera.position.x += 0.2;
+
+        if (stateY < 0) Camera.position.z -= 0.2;
+        if (stateY > 0) Camera.position.z += 0.2;
+      }, 60);
+    } else {
+      // clearInterval(timerId);
+    }
+
+    return () => {
+      clearInterval(timerId);
+    };
+  }, [Camera, isMove, stateX, stateY]);
 
   return (
     <Flex flex={1}>
@@ -48,10 +84,10 @@ const WebGlScreen: React.FC<Props> = () => {
             });
 
             const scene = new Scene();
-            scene.add(new GridHelper(50, 50));
+            scene.add(new GridHelper(100, 100));
 
             const geometry = new BoxGeometry(2, 2, 2);
-            const material = new MeshLambertMaterial({ color: 'blue' });
+            const material = new MeshLambertMaterial({ color: '#6954e0' });
             const cube = new Mesh(geometry, material);
             cube.position.set(0, 2, 0);
             scene.add(cube);
@@ -61,7 +97,8 @@ const WebGlScreen: React.FC<Props> = () => {
             scene.add(pointLight);
 
             const camera = new PerspectiveCamera(75, drawingBufferWidth / drawingBufferHeight, 0.1, 1000);
-            camera.position.set(0, 2, 7);
+            camera.position.set(0, 2, 8);
+            setCamera(camera);
 
             const animate = () => {
               requestAnimationFrame(animate);
@@ -78,17 +115,24 @@ const WebGlScreen: React.FC<Props> = () => {
         />
       </Box>
 
-      <Stick {...{ x, y }} />
+      <Stick {...{ x, y, setStateX, setStateY, move }} />
     </Flex>
   );
 };
 
-const Stick = ({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [stateX, setStateX] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [stateY, setStateY] = useState(0);
-
+const Stick = ({
+  x,
+  y,
+  setStateX,
+  setStateY,
+  move,
+}: {
+  x: SharedValue<number>;
+  y: SharedValue<number>;
+  setStateX: Dispatch<SetStateAction<number>>;
+  setStateY: Dispatch<SetStateAction<number>>;
+  move: (resultX: number, resutlY: number) => void;
+}) => {
   const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, { startX: number; startY: number }>({
     onStart: (_, ctx) => {
       ctx.startX = x.value;
@@ -117,15 +161,15 @@ const Stick = ({ x, y }: { x: SharedValue<number>; y: SharedValue<number> }) => 
   });
 
   const recordResult = (resultX: number, resultY: number) => {
+    console.info({ resultX, resultY });
     setStateX(resultX);
     setStateY(resultY);
+    move(resultX, resultY);
   };
 
   useDerivedValue(() => {
     runOnJS(recordResult)(x.value, y.value);
   });
-
-  // console.log({ stateX, stateY });
 
   return (
     <Center flex={1} m={1} bgColor='red'>

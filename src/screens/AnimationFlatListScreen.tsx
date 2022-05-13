@@ -50,13 +50,13 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
   const animatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       y.value,
-      [ITEM_HEIGHT_TOTAL * index - 100, ITEM_HEIGHT_TOTAL * index, ITEM_HEIGHT_TOTAL * index + 100],
+      [0, ITEM_HEIGHT_TOTAL * index, ITEM_HEIGHT_TOTAL * index + 100],
       [1, 1, 0],
       Extrapolate.CLAMP
     );
     const scale = interpolate(
       y.value,
-      [ITEM_HEIGHT_TOTAL * index - 100, ITEM_HEIGHT_TOTAL * index, ITEM_HEIGHT_TOTAL * index + 100],
+      [0, ITEM_HEIGHT_TOTAL * index, ITEM_HEIGHT_TOTAL * index + 100],
       [1, 1, 0.6],
       Extrapolate.CLAMP
     );
@@ -78,6 +78,7 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
     <Animated.View
       style={[
         {
+          flex: 1,
           height: ITEM_HEIGHT,
           margin: ITEM_MARGIN,
         },
