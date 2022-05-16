@@ -1,7 +1,7 @@
 import React, { ReactNode, VFC } from 'react';
 import { StyleSheet, TouchableOpacity, ViewProps } from 'react-native';
 
-import { Box, Text } from 'native-base';
+import { Box, HStack, Text } from 'native-base';
 
 type NestChildProp = {
   index?: number;
@@ -12,9 +12,11 @@ type NestChildProp = {
 export const NestItem: VFC<NestChildProp> = ({ index, viewProps, onItemClick, children }: NestChildProp) => {
   return (
     <TouchableOpacity {...viewProps} style={[styles.nestChildStyle, viewProps?.style]} onPress={onItemClick}>
-      <Box borderRadius={2} p={1} justifyContent='center'>
-        <Text>{index}</Text>
-        {children}
+      <Box flex={1} borderRadius={2} p={1} justifyContent='center'>
+        <HStack flex={1} px={2} alignItems='center'>
+          <Text>{index}</Text>
+          {children}
+        </HStack>
       </Box>
     </TouchableOpacity>
   );

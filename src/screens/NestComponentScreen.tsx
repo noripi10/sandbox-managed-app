@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
 import { Menu, Box, Text } from 'native-base';
@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { NestMenu } from '@/components/NestMenu';
 
-export default function NestComponentScreen() {
+const NestComponentScreen: FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Box flex={1} p={4}>
@@ -66,10 +66,12 @@ export default function NestComponentScreen() {
       </Box>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
+
+export default NestComponentScreen;

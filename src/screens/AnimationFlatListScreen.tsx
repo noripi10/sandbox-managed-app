@@ -112,7 +112,7 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
   );
 };
 
-export default function AnimationFlatListScreen() {
+const AnimationFlatListScreen: FC = () => {
   const y = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler((event: NativeScrollEvent) => {
@@ -133,7 +133,7 @@ export default function AnimationFlatListScreen() {
       </Box>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -142,3 +142,5 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
 });
+
+export default AnimationFlatListScreen;

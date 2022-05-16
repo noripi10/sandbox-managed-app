@@ -1,9 +1,10 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState, useRef } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
 
-import { Box, Center, Flex, HStack, Text } from 'native-base';
+import { Box, Button, Center, Flex, HStack, Text } from 'native-base';
 
-import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
+// import { Camera as ExCamera } from 'expo-camera';
+import { ExpoWebGLRenderingContext, GLSnapshot, GLView } from 'expo-gl';
 import ExpoThree from 'expo-three';
 
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -20,6 +21,7 @@ import { BoxGeometry, GridHelper, PerspectiveCamera, PointLight, Scene } from 't
 import { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial';
 import { Mesh } from 'three/src/objects/Mesh';
 
+// import { usePermission } from '@/hooks/usePermission';
 import { BottomNavigationParamList } from '@/navigation/BottomNavigator';
 
 type Props = BottomTabScreenProps<BottomNavigationParamList, 'WebGL'>;
@@ -33,19 +35,66 @@ const WebGlScreen: React.FC<Props> = () => {
   const [isMove, setMove] = useState<boolean>(false);
   const [stateX, setStateX] = useState(0);
   const [stateY, setStateY] = useState(0);
+  const [snapshot, setSnapshot] = useState<GLSnapshot>();
 
   const x = useSharedValue(0);
   const y = useSharedValue(0);
 
-  const move = (stickX: number, stickY: number) => {
-    if (Camera) {
-      if (stickX + stickY === 0) {
-        setMove(false);
-        return;
+  const glRef = useRef<GLView>(null);
+
+  const move = useCallback(
+    (stickX: number, stickY: number) => {
+      if (Camera) {
+        if (stickX + stickY === 0) {
+          setMove(false);
+          return;
+        }
+        setMove(true);
       }
-      setMove(true);
-    }
-  };
+    },
+    [Camera]
+  );
+
+  const contextCreate = useCallback((gl: ExpoWebGLRenderingContext) => {
+    const { drawingBufferWidth, drawingBufferHeight } = gl;
+    console.info({ drawingBufferWidth, drawingBufferHeight });
+    const renderer = new ExpoThree.Renderer({
+      gl,
+      width: drawingBufferWidth,
+      height: drawingBufferHeight,
+      clearColor: 'white',
+    });
+
+    const scene = new Scene();
+
+    scene.add(new GridHelper(100, 100));
+
+    const geometry = new BoxGeometry(2, 2, 2);
+    const material = new MeshLambertMaterial({ color: '#6954e0' });
+    const cube = new Mesh(geometry, material);
+    cube.position.set(0, 2, 0);
+    scene.add(cube);
+
+    const pointLight = new PointLight('#fff', 2, 1000, 1);
+    pointLight.position.set(0, 200, 200);
+    scene.add(pointLight);
+
+    const camera = new PerspectiveCamera(75, drawingBufferWidth / drawingBufferHeight, 0.1, 1000);
+    camera.position.set(0, 2, 8);
+    setCamera(camera);
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+      // @ts-ignore
+      renderer.render(scene, camera);
+      gl.endFrameEXP();
+    };
+
+    animate();
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line no-undef
@@ -70,49 +119,31 @@ const WebGlScreen: React.FC<Props> = () => {
 
   return (
     <Flex flex={1}>
-      <Box flex={1}>
-        <GLView
-          style={styles.gl}
-          onContextCreate={(gl: ExpoWebGLRenderingContext) => {
-            const { drawingBufferWidth, drawingBufferHeight } = gl;
-            console.info({ drawingBufferWidth, drawingBufferHeight });
-            const renderer = new ExpoThree.Renderer({
-              gl,
-              width: drawingBufferWidth,
-              height: drawingBufferHeight,
-              clearColor: 'white',
-            });
-
-            const scene = new Scene();
-            scene.add(new GridHelper(100, 100));
-
-            const geometry = new BoxGeometry(2, 2, 2);
-            const material = new MeshLambertMaterial({ color: '#6954e0' });
-            const cube = new Mesh(geometry, material);
-            cube.position.set(0, 2, 0);
-            scene.add(cube);
-
-            const pointLight = new PointLight(0xffffff, 2, 1000, 1);
-            pointLight.position.set(0, 200, 200);
-            scene.add(pointLight);
-
-            const camera = new PerspectiveCamera(75, drawingBufferWidth / drawingBufferHeight, 0.1, 1000);
-            camera.position.set(0, 2, 8);
-            setCamera(camera);
-
-            const animate = () => {
-              requestAnimationFrame(animate);
-
-              cube.rotation.x += 0.01;
-              cube.rotation.y += 0.01;
-              // @ts-ignore
-              renderer.render(scene, camera);
-              gl.endFrameEXP();
-            };
-
-            animate();
+      <Box flex={1} position='relative'>
+        <GLView style={styles.gl} ref={glRef} onContextCreate={contextCreate} />
+        <Button
+          position={'absolute'}
+          top={8}
+          right={4}
+          onPress={async () => {
+            if (glRef.current) {
+              const res = await glRef.current.takeSnapshotAsync();
+              setSnapshot(res);
+            }
           }}
-        />
+        >
+          SnapShot
+        </Button>
+        {snapshot && (
+          <Box position={'absolute'} bottom={0} right={0}>
+            <Image
+              source={{ uri: snapshot.uri as string }}
+              style={{ width: 100, height: 100 }}
+              resizeMethod='auto'
+              resizeMode='cover'
+            />
+          </Box>
+        )}
       </Box>
 
       <Stick {...{ x, y, setStateX, setStateY, move }} />
@@ -161,7 +192,7 @@ const Stick = ({
   });
 
   const recordResult = (resultX: number, resultY: number) => {
-    console.info({ resultX, resultY });
+    // console.info({ resultX, resultY });
     setStateX(resultX);
     setStateY(resultY);
     move(resultX, resultY);

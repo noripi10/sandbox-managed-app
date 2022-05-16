@@ -20,7 +20,10 @@
       "requireFullScreen": true,
       "bundleIdentifier": "com.hiroapp.sandboxmanagedapp",
       "buildNumber": "1",
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to output camera image."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +32,8 @@
       },
       "package": "com.hiroapp.sandboxmanagedapp",
       "versionCode": 1,
-      "jsEngine": "hermes"
+      "jsEngine": "hermes",
+      "permissions": ["CAMERA"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
