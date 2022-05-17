@@ -4,6 +4,7 @@ import { Appearance } from 'react-native';
 import { useColorMode } from 'native-base';
 
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 
@@ -18,12 +19,15 @@ export const useGlobalTheme = () => {
   const lisner = useCallback(
     (pref: Appearance.AppearancePreferences) => {
       setColorMode(pref.colorScheme ?? 'light');
+
+      SystemUI.setBackgroundColorAsync(pref.colorScheme === 'dark' ? '#000' : '#fff');
     },
     [setColorMode]
   );
 
   useLayoutEffect(() => {
     const nativeTheme = Appearance.getColorScheme();
+    SystemUI.setBackgroundColorAsync(nativeTheme === 'dark' ? '#000' : '#fff');
     setColorMode(nativeTheme);
 
     const unsubscribe = Appearance.addChangeListener(lisner);

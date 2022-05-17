@@ -53,6 +53,7 @@
       }
     ]
   }
+
   // "overrides": [
   //   {
   //     "files": ["src/**/*.{js,jsx,ts,tsx}"],
