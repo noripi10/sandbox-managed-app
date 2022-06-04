@@ -44,9 +44,7 @@
   "submit": {
     "production": {
       "android": {},
-      "ios": {
-        "ascAppId": ""
-      }
+      "ios": {}
     }
   }
 }

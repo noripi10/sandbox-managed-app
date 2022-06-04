@@ -13,28 +13,32 @@ const NestComponentScreen: FC = () => {
       <Box flex={1} p={4}>
         <Text>CustomNestComponent</Text>
         <ScrollView>
-          <NestMenu viewProps={{ style: { flex: 1, width: '100%' } }}>
+          <NestMenu
+            viewProps={{ style: { flex: 1, width: '100%' } }}
+            // ここで定義すると子のイベントが全部上書きされる
+            // onItemClick={() => console.info('parent define click')}
+          >
             <NestMenu.Item
               viewProps={{ style: { height: 48, width: '100%', backgroundColor: '#c62727', marginVertical: 4 } }}
-              onItemClick={() => console.info('1')}
+              onItemClick={() => console.info('child define click 1')}
             >
               <Text>test1</Text>
             </NestMenu.Item>
             <NestMenu.Item
               viewProps={{ style: { height: 48, width: '100%', backgroundColor: '#2767c6', marginVertical: 4 } }}
-              onItemClick={() => console.info('2')}
+              onItemClick={() => console.info('child define click 2')}
             >
               <Text>test2</Text>
             </NestMenu.Item>
             <NestMenu.Item
               viewProps={{ style: { height: 48, width: '100%', backgroundColor: '#bf6c00', marginVertical: 4 } }}
-              onItemClick={() => console.info('3')}
+              onItemClick={() => console.info('child define click 3')}
             >
               <Text>test3</Text>
             </NestMenu.Item>
             <NestMenu.Item
               viewProps={{ style: { height: 48, width: '100%', backgroundColor: '#048428e2', marginVertical: 4 } }}
-              onItemClick={() => console.info('4')}
+              onItemClick={() => console.info('child define click 4')}
             >
               <Text>test4</Text>
             </NestMenu.Item>

@@ -8,6 +8,7 @@ import { ExpoWebGLRenderingContext, GLSnapshot, GLView } from 'expo-gl';
 import ExpoThree from 'expo-three';
 
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
@@ -21,7 +22,6 @@ import { BoxGeometry, GridHelper, PerspectiveCamera, PointLight, Scene } from 't
 import { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial';
 import { Mesh } from 'three/src/objects/Mesh';
 
-// import { usePermission } from '@/hooks/usePermission';
 import { BottomNavigationParamList } from '@/navigation/BottomNavigator';
 
 type Props = BottomTabScreenProps<BottomNavigationParamList, 'WebGL'>;
@@ -31,6 +31,10 @@ const STICK_SIZE = 40;
 const STICK_AVAILABLE_AREA = (STICK_RADIUS - STICK_SIZE) / 2;
 
 const WebGlScreen: React.FC<Props> = () => {
+  const navigation = useNavigation();
+
+  const [active, setActive] = useState(false);
+
   const [Camera, setCamera] = useState<PerspectiveCamera | undefined>();
   const [isMove, setMove] = useState<boolean>(false);
   const [stateX, setStateX] = useState(0);
@@ -116,6 +120,15 @@ const WebGlScreen: React.FC<Props> = () => {
       clearInterval(timerId);
     };
   }, [Camera, isMove, stateX, stateY]);
+
+  useEffect(() => {
+    navigation.addListener('blur', () => setActive(false));
+    navigation.addListener('focus', () => setActive(true));
+  }, [navigation]);
+
+  if (!active) {
+    return null;
+  }
 
   return (
     <Flex flex={1}>

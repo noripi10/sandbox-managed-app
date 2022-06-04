@@ -14,7 +14,7 @@ export const NestItem: VFC<NestChildProp> = ({ index, viewProps, onItemClick, ch
     <TouchableOpacity {...viewProps} style={[styles.nestChildStyle, viewProps?.style]} onPress={onItemClick}>
       <Box flex={1} borderRadius={2} p={1} justifyContent='center'>
         <HStack flex={1} px={2} alignItems='center'>
-          <Text>{index}</Text>
+          <Text>{index}.</Text>
           {children}
         </HStack>
       </Box>
@@ -24,15 +24,20 @@ export const NestItem: VFC<NestChildProp> = ({ index, viewProps, onItemClick, ch
 
 type NestMenuProp = {
   viewProps?: ViewProps;
+  onItemClick?: () => void;
   // eslint-disable-next-line no-undef
   children: JSX.Element[];
 };
-export const NestMenu: VFC<NestMenuProp> & { Item: VFC<NestChildProp> } = ({ viewProps, children }: NestMenuProp) => {
+export const NestMenu: VFC<NestMenuProp> & { Item: VFC<NestChildProp> } = ({
+  viewProps,
+  onItemClick,
+  children,
+}: NestMenuProp) => {
   return (
     <Box {...viewProps}>
       {/* NestItemを展開 */}
       {React.Children.map(children, (child, index) => {
-        return React.cloneElement(child, { index });
+        return React.cloneElement(child, { index, onItemClick });
       })}
     </Box>
   );

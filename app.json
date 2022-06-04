@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#02BCD4"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,7 +22,10 @@
       "buildNumber": "1",
       "jsEngine": "hermes",
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to output camera image."
+        "NSCameraUsageDescription": "This app uses the camera to output camera image.",
+        "NSLocationWhenInUseUsageDescription": "The Beep App uses your location to pick origins, destinations, and predict ride times",
+        "NSLocationAlwaysUsageDescription": "The Beep App will use your location to provide ETA's to yourself and others",
+        "UIBackgroundModes": ["location", "fetch"]
       }
     },
     "android": {
@@ -33,7 +36,7 @@
       "package": "com.hiroapp.sandboxmanagedapp",
       "versionCode": 1,
       "jsEngine": "hermes",
-      "permissions": ["CAMERA"]
+      "permissions": ["CAMERA", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
