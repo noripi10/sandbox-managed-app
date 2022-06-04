@@ -1,0 +1,12 @@
+query getUsers {
+  users {
+    id
+    email
+    name
+    todos {
+      id
+      title
+      description
+    }
+  }
+}

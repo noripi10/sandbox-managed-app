@@ -1,0 +1,30 @@
+type Mutation {
+  createTodo(description: String!, title: String!, userId: String!): Todo!
+  createUser(email: String!, name: String!): User!
+  deleteTodo(id: String!): Todo!
+  updateTodo(description: String!, id: String!, title: String!): Todo!
+  updateUser(email: String!, id: String!, name: String!): User!
+}
+
+type Query {
+  todo(id: String!): Todo!
+  todos: [Todo!]!
+  user(id: String!): User!
+  users: [User!]!
+}
+
+type Todo {
+  description: String!
+  done: Boolean!
+  id: String!
+  title: String!
+  user: User
+  userId: String
+}
+
+type User {
+  email: String!
+  id: String!
+  name: String!
+  todos: [Todo!]!
+}

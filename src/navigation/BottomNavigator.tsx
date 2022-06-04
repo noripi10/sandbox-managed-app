@@ -1,7 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { AnimationFlatListScreen, LocationScreen, NestComponentScreen, SVGScreen, WebGlScreen } from '@/screens';
+import {
+  AnimationFlatListScreen,
+  GraphqlScreen,
+  LocationScreen,
+  NestComponentScreen,
+  SVGScreen,
+  WebGlScreen,
+} from '@/screens';
 
 export type BottomNavigationParamList = {
   AnimationList: undefined;
@@ -9,6 +16,7 @@ export type BottomNavigationParamList = {
   WebGL: undefined;
   SVG: undefined;
   Location: undefined;
+  Graphql: undefined;
 };
 
 const Bottom = createBottomTabNavigator<BottomNavigationParamList>();
@@ -24,6 +32,7 @@ export const BottomNavigator = () => {
         },
       })}
     >
+      <Bottom.Screen name='Graphql' component={GraphqlScreen} />
       <Bottom.Screen name='SVG' component={SVGScreen} />
       <Bottom.Screen name='WebGL' component={WebGlScreen} />
       <Bottom.Screen name='NestComponent' component={NestComponentScreen} />
