@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { LayoutChangeEvent, StyleSheet } from 'react-native';
 
-import { Box, Button, Center, Text, useToast } from 'native-base';
+import { Box, Button, Center, Text, useToast, Spacer } from 'native-base';
 
 import * as Location from 'expo-location';
-import { LocationObject } from 'expo-location';
+import { LocationObjectCoords } from 'expo-location';
 import * as Manager from 'expo-task-manager';
+
+import MapView, { Marker } from 'react-native-maps';
 
 const TASK_NAME = 'location-update-tast';
 Manager.defineTask(TASK_NAME, ({ data, error }) => {
@@ -18,7 +21,8 @@ Manager.defineTask(TASK_NAME, ({ data, error }) => {
 type Props = unknown;
 const LocationScreen: React.FC<Props> = () => {
   // const [hasUpdate, setHasUpdate] = useState(false);
-  const [currentLocation, setCurrentLocaion] = useState<LocationObject>();
+  const [currentLocation, setCurrentLocaion] = useState<LocationObjectCoords | undefined>();
+  const [mapBoxSize, setMapBoxSize] = useState<{ width: number; height: number }>({ height: 100, width: 100 });
 
   const toast = useToast();
 
@@ -37,7 +41,9 @@ const LocationScreen: React.FC<Props> = () => {
       {
         accuracy: Location.Accuracy.BestForNavigation,
       },
-      (location) => setCurrentLocaion(location)
+      (location) => {
+        setCurrentLocaion(location.coords);
+      }
     );
     /*
      if (hasUpdate) {
@@ -52,35 +58,84 @@ const LocationScreen: React.FC<Props> = () => {
       });
      */
   };
-  const onStopWatch = () => {
+  const onStopWatch = async () => {
     ref.current?.remove();
-    setCurrentLocaion(undefined);
+    const location = await Location.getCurrentPositionAsync();
+    setCurrentLocaion(location.coords);
+  };
+
+  const onLayoutMapBox = ({
+    nativeEvent: {
+      layout: { height, width },
+    },
+  }: LayoutChangeEvent) => {
+    console.info({ height, width });
+    setMapBoxSize({ height, width });
   };
 
   useEffect(() => {
     const init = async () => {
       const result = await Location.requestForegroundPermissionsAsync();
       if (result.granted) {
-        await Location.requestBackgroundPermissionsAsync();
+        try {
+          const location = await Location.getCurrentPositionAsync();
+          setCurrentLocaion(location.coords);
+
+          await Location.requestBackgroundPermissionsAsync();
+        } catch (error: unknown) {
+          console.error(error);
+        }
       }
     };
     init();
   }, []);
 
   return (
-    <Box flex={1} justifyContent={'center'} alignItems={'center'}>
-      <Center flex={1}>
-        <Text>LocationScreen</Text>
-        <Button onPress={onStartWatch} variant='link'>
+    <Box flex={1} justifyContent={'center'} alignItems={'center'} safeAreaTop>
+      <Text fontSize={16}>LocationScreen</Text>
+      <Center flexDir={'row'} p={3}>
+        <Button onPress={onStartWatch} variant='link' p={1}>
           Start Watch Location
         </Button>
-        <Button onPress={onStopWatch} variant='link'>
+        <Button onPress={onStopWatch} variant='link' p={1}>
           Stop Watch Location
         </Button>
       </Center>
-      <Center flex={1}>{currentLocation && <Text>{JSON.stringify(currentLocation)}</Text>}</Center>
+      <Box flex={1} onLayout={onLayoutMapBox} w='full'>
+        {currentLocation && (
+          <MapView
+            style={[styles.map, mapBoxSize]}
+            initialRegion={{
+              latitude: currentLocation?.latitude,
+              longitude: currentLocation?.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            <Marker coordinate={{ latitude: currentLocation.latitude, longitude: currentLocation.longitude }} />
+          </MapView>
+        )}
+      </Box>
+
+      <Center flexDir={'row'} height={12} justifyContent='center' alignItems={'center'}>
+        {currentLocation && (
+          <>
+            <Spacer />
+            <Text>緯度{currentLocation.latitude}</Text>
+            <Spacer />
+            <Text>経度{currentLocation.longitude}</Text>
+            <Spacer />
+          </>
+        )}
+      </Center>
     </Box>
   );
 };
+
+const styles = StyleSheet.create({
+  map: {
+    flex: 1,
+  },
+});
 
 export default LocationScreen;

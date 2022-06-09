@@ -81,6 +81,7 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
           flex: 1,
           height: ITEM_HEIGHT,
           margin: ITEM_MARGIN,
+          width: Dimensions.get('window').width - 16,
         },
         animatedStyle,
       ]}

@@ -34,5 +34,5 @@ export const useGlobalTheme = () => {
     return () => unsubscribe.remove();
   }, [lisner, setColorMode]);
 
-  return { naviTheme, nbTheme: colorMode, AutoStatusBar };
+  return { AutoStatusBar, naviTheme, nbTheme: colorMode };
 };
