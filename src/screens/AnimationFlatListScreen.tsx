@@ -16,7 +16,9 @@ import { Box } from 'native-base';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { Ionicons } from '@expo/vector-icons';
 import { faker } from '@faker-js/faker';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, {
   Extrapolate,
   interpolate,
@@ -24,6 +26,9 @@ import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  FadeIn,
+  FadeOut,
+  withTiming,
 } from 'react-native-reanimated';
 
 const WIDTH = Dimensions.get('window').width;
@@ -43,9 +48,13 @@ const list = [...Array(100).keys()].map(() => {
 type ItemProp = typeof list[0];
 
 const AnimatedFlatlist = Animated.createAnimatedComponent<FlatListProps<ItemProp>>(FlatList);
+const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> = ({ item, index, y }) => {
   const [, setItemWidth] = useState(ITEM_WIDTH);
+
+  const [open, setOpen] = useState(false);
+  const rotateVal = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -64,6 +73,12 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
     return { opacity, transform: [{ scale }] };
   });
 
+  const animatedIconStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotate: rotateVal.value + 'deg' }],
+    };
+  });
+
   const dimensionsChangeEvent = ({ window }: { window: ScaledSize; screen: ScaledSize }) => {
     setItemWidth(window.width * 0.95);
   };
@@ -75,41 +90,98 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
   }, []);
 
   return (
-    <Animated.View
-      style={[
-        {
-          flex: 1,
-          height: ITEM_HEIGHT,
-          margin: ITEM_MARGIN,
-          width: Dimensions.get('window').width - 16,
-        },
-        animatedStyle,
-      ]}
-    >
-      <LinearGradient
-        style={{ flex: 1, borderRadius: 8 }}
-        colors={['#193ab2', '#5db6ff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+    <>
+      {/* TODO 子コンポーネントをOpenしていると高さ計算がバグる... */}
+      <Animated.View
+        style={[
+          {
+            flex: 1,
+            height: ITEM_HEIGHT,
+            margin: ITEM_MARGIN,
+            width: Dimensions.get('window').width - 16,
+          },
+          animatedStyle,
+        ]}
       >
-        <View
+        <LinearGradient
           style={{
             flex: 1,
-            flexDirection: 'row',
-            alignItems: 'center',
+            borderRadius: 8,
+            borderBottomLeftRadius: open ? 0 : 8,
+            borderBottomRightRadius: open ? 0 : 8,
           }}
+          colors={['#193ab2', '#5db6ff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
         >
-          <View style={{ paddingHorizontal: 16 }}>
-            <Image source={{ uri: item.avatar }} style={{ width: 56, height: 56, borderRadius: 28 }} />
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <View style={{ paddingHorizontal: 16 }}>
+              <Image source={{ uri: item.avatar }} style={{ width: 56, height: 56, borderRadius: 28 }} />
+            </View>
+            <View style={{ flexGrow: 1 }}>
+              <Text>{item.name}</Text>
+              <Text>{item.address}</Text>
+              <Text>{item.phone}</Text>
+            </View>
+            <View style={{ marginRight: 16 }}>
+              <TouchableOpacity
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                  backgroundColor: '#30cbff',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={() => {
+                  if (open) {
+                    rotateVal.value = withTiming(0, { duration: 300 });
+                  } else {
+                    rotateVal.value = withTiming(540, { duration: 300 });
+                  }
+                  setOpen((pre) => !pre);
+                }}
+              >
+                <AnimatedIcon style={animatedIconStyle} name={'arrow-down'} size={28} color='#00f' />
+              </TouchableOpacity>
+            </View>
           </View>
-          <View>
-            <Text>{item.name}</Text>
-            <Text>{item.address}</Text>
-            <Text>{item.phone}</Text>
-          </View>
-        </View>
-      </LinearGradient>
-    </Animated.View>
+        </LinearGradient>
+      </Animated.View>
+      {open && (
+        <Animated.View
+          entering={FadeIn}
+          exiting={FadeOut}
+          style={[
+            {
+              width: Dimensions.get('window').width - 16,
+              backgroundColor: '#92c4ef',
+              marginHorizontal: ITEM_MARGIN,
+              marginTop: -8,
+              padding: 8,
+              borderBottomLeftRadius: 8,
+              borderBottomRightRadius: 8,
+            },
+          ]}
+        >
+          <Box bgColor={'amber.100'}>
+            <Text>1</Text>
+          </Box>
+          <Box bgColor={'amber.200'}>
+            <Text>2</Text>
+          </Box>
+          <Box bgColor={'amber.400'}>
+            <Text>3</Text>
+          </Box>
+        </Animated.View>
+      )}
+    </>
   );
 };
 
