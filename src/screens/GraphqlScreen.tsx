@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 
-import { Box, Heading, Text } from 'native-base';
+import { Box, Center, Heading, Spinner, Text } from 'native-base';
 
 import { useGetUsersQuery } from '@/types/graphql/graphql';
 
 const GraphqlScreen: FC = () => {
-  const { data, error } = useGetUsersQuery();
+  const { data, error, loading } = useGetUsersQuery();
 
   if (error) {
     return (
@@ -27,10 +27,16 @@ const GraphqlScreen: FC = () => {
         <Heading>GraphqlScreen</Heading>
         {/* <Button onPress={getSampleData}>getSampleData</Button> */}
       </Box>
-      <Box flex={1}>
-        <Text>data</Text>
-        <Text>{JSON.stringify(data)}</Text>
-      </Box>
+      {loading ? (
+        <Center flex={1}>
+          <Spinner size='lg' accessibilityLabel='loading data' />
+        </Center>
+      ) : (
+        <Box flex={1}>
+          <Text>data</Text>
+          <Text>{JSON.stringify(data)}</Text>
+        </Box>
+      )}
     </Box>
   );
 };
