@@ -14,7 +14,7 @@
         "buildConfiguration": "Debug"
       },
       "env": {
-        "ENV_BUILD_MODE": "development"
+        "APP_ENV": "development"
       }
     },
     "preview": {
@@ -27,7 +27,7 @@
         "buildConfiguration": "Debug"
       },
       "env": {
-        "ENV_BUILD_MODE": "preview"
+        "APP_ENV": "preview"
       }
     },
     "production": {
@@ -37,7 +37,7 @@
       },
       "android": {},
       "env": {
-        "ENV_BUILD_MODE": "production"
+        "APP_ENV": "production"
       }
     }
   },
