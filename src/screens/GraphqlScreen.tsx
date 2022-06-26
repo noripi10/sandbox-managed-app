@@ -5,7 +5,7 @@ import { Box, Center, Heading, ScrollView, Spinner, Text } from 'native-base';
 import { useGetUsersQuery } from '@/types/graphql/graphql';
 
 const GraphqlScreen: FC = () => {
-  const { data, error } = useGetUsersQuery();
+  const { data, error, loading } = useGetUsersQuery();
 
   if (error) {
     return (
@@ -31,7 +31,7 @@ const GraphqlScreen: FC = () => {
           <Text>{JSON.stringify(data, null, 2)}</Text>
         </Box>
       </ScrollView>
-      {!data && (
+      {loading && (
         <Center position={'absolute'} top={0} right={0} w='full' h='full'>
           <Spinner size='lg' color='green' />
         </Center>

@@ -11,7 +11,11 @@
     "format": "prettier --write ./src/**/*.{ts,tsx}",
     "lint": "eslint --fix ./src/**/*.{ts,tsx}",
     "prepare": "husky install",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml",
+    "eas-build-development": "eas build --profile development --platform all",
+    "eas-build-preview": "eas build --profile preview --platform all",
+    "eas-build-production": "eas build --profile production --platform all",
+    "eas-submit-production": "eas submit --profile production --platform all"
   },
   "dependencies": {
     "@apollo/client": "^3.6.6",
@@ -51,7 +55,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@expo/config": "^6.0.23",
+    "@expo/config": "~6.0.19",
     "@graphql-codegen/cli": "2.6.2",
     "@graphql-codegen/introspection": "2.1.1",
     "@graphql-codegen/schema-ast": "^2.4.1",
@@ -69,6 +73,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.5.3",
     "husky": "^7.0.0",
     "lint-staged": "^12.4.0",
     "prettier": "^2.6.2",

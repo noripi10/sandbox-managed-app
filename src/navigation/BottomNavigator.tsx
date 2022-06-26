@@ -7,12 +7,12 @@ import {
   LocationScreen,
   NestComponentScreen,
   SVGScreen,
-  WebGlScreen,
+  WebGLScreen,
   WelcomScreen,
 } from '@/screens';
 
 export type BottomNavigationParamList = {
-  AnimationList: undefined;
+  AnimationFlatList: undefined;
   NestComponent: undefined;
   WebGL: undefined;
   SVG: undefined;
@@ -24,22 +24,24 @@ export type BottomNavigationParamList = {
 const Bottom = createBottomTabNavigator<BottomNavigationParamList>();
 
 export const BottomNavigator = () => {
+  const createTabBarIcon = ({ size, color }: { focused: boolean; size: number; color: string }) => {
+    return <Ionicons size={size} color={color} name='logo-react' />;
+  };
+
   return (
     <Bottom.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         headerTitle: route.name,
-        tabBarIcon: ({ size, color }) => {
-          return <Ionicons size={size} color={color} name='logo-react' />;
-        },
+        tabBarIcon: createTabBarIcon,
       })}
     >
       <Bottom.Screen name='Welcome' component={WelcomScreen} />
       <Bottom.Screen name='Graphql' component={GraphqlScreen} />
       <Bottom.Screen name='SVG' component={SVGScreen} />
-      <Bottom.Screen name='WebGL' component={WebGlScreen} />
+      <Bottom.Screen name='WebGL' component={WebGLScreen} />
       <Bottom.Screen name='NestComponent' component={NestComponentScreen} />
-      <Bottom.Screen name='AnimationList' component={AnimationFlatListScreen} />
+      <Bottom.Screen name='AnimationFlatList' component={AnimationFlatListScreen} />
       <Bottom.Screen name='Location' component={LocationScreen} />
     </Bottom.Navigator>
   );

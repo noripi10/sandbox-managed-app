@@ -9,6 +9,8 @@ import * as Manager from 'expo-task-manager';
 
 import MapView, { Marker } from 'react-native-maps';
 
+import { BasePageProps } from '@/types/navigation';
+
 const TASK_NAME = 'location-update-tast';
 Manager.defineTask(TASK_NAME, ({ data, error }) => {
   if (error) {
@@ -18,8 +20,9 @@ Manager.defineTask(TASK_NAME, ({ data, error }) => {
   console.info({ data });
 });
 
-type Props = unknown;
-const LocationScreen: React.FC<Props> = () => {
+type Props = BasePageProps<'Location'>;
+
+const LocationScreen: React.FC<Props> = ({ navigation }) => {
   // const [hasUpdate, setHasUpdate] = useState(false);
   const [currentLocation, setCurrentLocaion] = useState<LocationObjectCoords | undefined>();
   const [mapBoxSize, setMapBoxSize] = useState<{ width: number; height: number }>({ height: 100, width: 100 });
@@ -72,6 +75,16 @@ const LocationScreen: React.FC<Props> = () => {
     console.info({ height, width });
     setMapBoxSize({ height, width });
   };
+
+  const onBlurEvent = () => {
+    console.info('blur locationscreen');
+    ref.current?.remove();
+  };
+
+  useEffect(() => {
+    navigation.addListener('blur', onBlurEvent);
+    return () => navigation.removeListener('blur', onBlurEvent);
+  }, [navigation]);
 
   useEffect(() => {
     const init = async () => {
