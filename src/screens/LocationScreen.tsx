@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet } from 'react-native';
 
-import { Box, Button, Center, Text, useToast, Spacer } from 'native-base';
+import { Box, Button, Center, Text, useToast, Spacer, HStack } from 'native-base';
 
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
@@ -106,13 +106,37 @@ const LocationScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <Box flex={1} justifyContent={'center'} alignItems={'center'} safeAreaTop>
       <Text fontSize={16}>LocationScreen</Text>
-      <Center flexDir={'row'} p={3}>
-        <Button onPress={onStartWatch} variant='link' p={1}>
-          Start Watch Location
-        </Button>
-        <Button onPress={onStopWatch} variant='link' p={1}>
-          Stop Watch Location
-        </Button>
+      <Center p={3}>
+        <HStack>
+          <Button
+            onPress={async () => {
+              const result = await Location.getForegroundPermissionsAsync();
+              console.info({ result });
+            }}
+            variant='link'
+            p={1}
+          >
+            Get Foreground Permission
+          </Button>
+          <Button
+            onPress={async () => {
+              const result = await Location.getBackgroundPermissionsAsync();
+              console.info({ result });
+            }}
+            variant='link'
+            p={1}
+          >
+            Get Background Permission
+          </Button>
+        </HStack>
+        <HStack>
+          <Button onPress={onStartWatch} variant='link' p={1}>
+            Start Watch Location
+          </Button>
+          <Button onPress={onStopWatch} variant='link' p={1}>
+            Stop Watch Location
+          </Button>
+        </HStack>
       </Center>
       <Box flex={1} onLayout={onLayoutMapBox} w='full'>
         {currentLocation && (

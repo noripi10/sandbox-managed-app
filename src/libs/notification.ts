@@ -24,7 +24,7 @@ export const registerForPushNotificationsAsync = async () => {
       alert('Failed to get push token for push notification!');
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
+    token = (await Notifications.getExpoPushTokenAsync({ experienceId: '@sgym.snk/sandbox-managed-app' })).data;
     console.info(token);
   } else {
     alert('Must use physical device for Push Notifications');
