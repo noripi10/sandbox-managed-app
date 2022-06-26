@@ -35,6 +35,9 @@ export const BottomNavigator = () => {
         headerTitle: route.name,
         tabBarIcon: createTabBarIcon,
       })}
+      // tabBar={(props) => {
+      //   return <>{console.info({ props })}</>;
+      // }}
     >
       <Bottom.Screen name='Welcome' component={WelcomScreen} />
       <Bottom.Screen name='Graphql' component={GraphqlScreen} />
