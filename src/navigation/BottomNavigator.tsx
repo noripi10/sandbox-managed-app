@@ -8,6 +8,7 @@ import {
   NestComponentScreen,
   SVGScreen,
   WebGlScreen,
+  WelcomScreen,
 } from '@/screens';
 
 export type BottomNavigationParamList = {
@@ -17,6 +18,7 @@ export type BottomNavigationParamList = {
   SVG: undefined;
   Location: undefined;
   Graphql: undefined;
+  Welcome: undefined;
 };
 
 const Bottom = createBottomTabNavigator<BottomNavigationParamList>();
@@ -32,6 +34,7 @@ export const BottomNavigator = () => {
         },
       })}
     >
+      <Bottom.Screen name='Welcome' component={WelcomScreen} />
       <Bottom.Screen name='Graphql' component={GraphqlScreen} />
       <Bottom.Screen name='SVG' component={SVGScreen} />
       <Bottom.Screen name='WebGL' component={WebGlScreen} />

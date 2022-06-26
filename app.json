@@ -26,7 +26,8 @@
         "NSCameraUsageDescription": "This app uses the camera to output camera image.",
         "NSLocationWhenInUseUsageDescription": "The Beep App uses your location to pick origins, destinations, and predict ride times",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Program requires GPS to track cars and job orders",
-        "NSLocationAlwaysUsageDescription": "The Beep App will use your location to provide ETA's to yourself and others"
+        "NSLocationAlwaysUsageDescription": "The Beep App will use your location to provide ETA's to yourself and others",
+        "CFBundleDisplayName": "SANDBOX"
       }
     },
     "android": {

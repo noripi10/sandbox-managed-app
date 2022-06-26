@@ -12,14 +12,21 @@ const client = new ApolloClient({
   cache,
 });
 
+import { PreventSplashScreen } from '@/libs/splash-screen';
+import { NotificationProvideer } from '@/providers/NotificationProvider';
+
 import { Router } from './src/navigation/Router';
+
+PreventSplashScreen();
 
 export default function App() {
   return (
-    <ApolloProvider client={client}>
+    <NotificationProvideer>
       <NativeBaseProvider>
-        <Router />
+        <ApolloProvider client={client}>
+          <Router />
+        </ApolloProvider>
       </NativeBaseProvider>
-    </ApolloProvider>
+    </NotificationProvideer>
   );
 }
