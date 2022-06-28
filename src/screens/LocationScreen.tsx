@@ -1,36 +1,40 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { LayoutChangeEvent, StyleSheet } from 'react-native';
+import { Alert, LayoutChangeEvent, StyleSheet } from 'react-native';
 
-import { Box, Button, Center, Text, useToast, Spacer, HStack } from 'native-base';
+import { Box, Button, Center, Text, useToast, VStack, Spinner } from 'native-base';
 
 import * as Location from 'expo-location';
 import { LocationObjectCoords } from 'expo-location';
-import * as Manager from 'expo-task-manager';
+import * as TaskManager from 'expo-task-manager';
 
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Circle, Marker } from 'react-native-maps';
 
 import { BasePageProps } from '@/types/navigation';
 
-const TASK_NAME = 'location-update-tast';
-Manager.defineTask(TASK_NAME, ({ data, error }) => {
+const LOCATION_UPDATE_TASK = 'location-update-tast';
+
+TaskManager.defineTask(LOCATION_UPDATE_TASK, ({ data, error }) => {
   if (error) {
     // check `error.message` for more details.
     return;
   }
+
   console.info({ data });
 });
 
 type Props = BasePageProps<'Location'>;
 
-const LocationScreen: React.FC<Props> = ({ navigation }) => {
+const LocationScreen: React.FC<Props> = () => {
   // const [hasUpdate, setHasUpdate] = useState(false);
   const [currentLocation, setCurrentLocaion] = useState<LocationObjectCoords | undefined>();
   const [mapBoxSize, setMapBoxSize] = useState<{ width: number; height: number }>({ height: 100, width: 100 });
+  const [markers, setMarkers] = useState<{ latitude: number; longitude: number }[]>([]);
 
   const toast = useToast();
 
   const ref = useRef<Location.LocationSubscription>();
-  const onStartWatch = async () => {
+
+  const onStartLocationWatch = async () => {
     const permission = await Location.getForegroundPermissionsAsync();
     if (!permission) {
       toast.show({
@@ -48,23 +52,40 @@ const LocationScreen: React.FC<Props> = ({ navigation }) => {
         setCurrentLocaion(location.coords);
       }
     );
-    /*
-     if (hasUpdate) {
-        setHasUpdate(false);
-        await Location.stopLocationUpdatesAsync(TASK_NAME);
-        return;
-      }
-
-      setHasUpdate(true);
-      await Location.startLocationUpdatesAsync(TASK_NAME, {
-        activityType: Location.ActivityType.Fitness,
-      });
-     */
   };
-  const onStopWatch = async () => {
+
+  const onStopLocationWatch = async () => {
     ref.current?.remove();
     const location = await Location.getCurrentPositionAsync();
     setCurrentLocaion(location.coords);
+  };
+
+  const onStartLocationUpdateBackground = async () => {
+    const isAvailable = await TaskManager.isAvailableAsync();
+    if (!isAvailable) {
+      Alert.alert('TaskManager not available');
+      return;
+    }
+
+    const isRegister = await TaskManager.isTaskRegisteredAsync(LOCATION_UPDATE_TASK);
+    if (!isRegister) {
+      Alert.alert('TaskManager not register');
+      return;
+    }
+
+    const status = await Location.hasStartedLocationUpdatesAsync(LOCATION_UPDATE_TASK);
+    if (!status) {
+      await Location.startLocationUpdatesAsync(LOCATION_UPDATE_TASK, {
+        accuracy: Location.Accuracy.BestForNavigation,
+      });
+    }
+  };
+
+  const onStopLocationUpdateBackground = async () => {
+    const status = await Location.hasStartedLocationUpdatesAsync(LOCATION_UPDATE_TASK);
+    if (status) {
+      await Location.stopLocationUpdatesAsync(LOCATION_UPDATE_TASK);
+    }
   };
 
   const onLayoutMapBox = ({
@@ -73,18 +94,18 @@ const LocationScreen: React.FC<Props> = ({ navigation }) => {
     },
   }: LayoutChangeEvent) => {
     console.info({ height, width });
-    setMapBoxSize({ height, width });
+    setMapBoxSize({ height: height * 0.9, width: width * 0.9 });
   };
 
-  const onBlurEvent = () => {
-    console.info('blur locationscreen');
-    ref.current?.remove();
-  };
+  // const onBlurEvent = () => {
+  //   console.info('Blur -> Location Watching 取り消し');
+  //   ref.current?.remove();
+  // };
 
-  useEffect(() => {
-    navigation.addListener('blur', onBlurEvent);
-    return () => navigation.removeListener('blur', onBlurEvent);
-  }, [navigation]);
+  // useEffect(() => {
+  //   navigation.addListener('blur', onBlurEvent);
+  //   return () => navigation.removeListener('blur', onBlurEvent);
+  // }, [navigation]);
 
   useEffect(() => {
     const init = async () => {
@@ -107,7 +128,8 @@ const LocationScreen: React.FC<Props> = ({ navigation }) => {
     <Box flex={1} justifyContent={'center'} alignItems={'center'} safeAreaTop>
       <Text fontSize={16}>LocationScreen</Text>
       <Center p={3}>
-        <HStack>
+        {/* Permission Confirm */}
+        <VStack>
           <Button
             onPress={async () => {
               const result = await Location.getForegroundPermissionsAsync();
@@ -128,17 +150,30 @@ const LocationScreen: React.FC<Props> = ({ navigation }) => {
           >
             Get Background Permission
           </Button>
-        </HStack>
-        <HStack>
-          <Button onPress={onStartWatch} variant='link' p={1}>
+        </VStack>
+
+        {/* Foreground Watch Location */}
+        <VStack>
+          <Button onPress={onStartLocationWatch} variant='link' p={1}>
             Start Watch Location
           </Button>
-          <Button onPress={onStopWatch} variant='link' p={1}>
+          <Button onPress={onStopLocationWatch} variant='link' p={1}>
             Stop Watch Location
           </Button>
-        </HStack>
+        </VStack>
+
+        {/* Background Update Location */}
+        <VStack>
+          <Button onPress={onStartLocationUpdateBackground} variant='link' p={1}>
+            Start Update Background Location
+          </Button>
+          <Button onPress={onStopLocationUpdateBackground} variant='link' p={1}>
+            Stop Update Background Location
+          </Button>
+        </VStack>
       </Center>
-      <Box flex={1} onLayout={onLayoutMapBox} w='full'>
+
+      <Center flex={1} onLayout={onLayoutMapBox} w='full'>
         {currentLocation && (
           <MapView
             style={[styles.map, mapBoxSize]}
@@ -148,22 +183,33 @@ const LocationScreen: React.FC<Props> = ({ navigation }) => {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
+            onLongPress={({
+              nativeEvent: {
+                coordinate: { latitude, longitude },
+              },
+            }) => {
+              setMarkers((prev) => [...prev, { latitude, longitude }]);
+            }}
           >
+            {/* current location marker */}
             <Marker coordinate={{ latitude: currentLocation.latitude, longitude: currentLocation.longitude }} />
+            {/* geofencing position */}
+            {markers.map((markerData, index) => (
+              <React.Fragment key={index.toString()}>
+                <Marker coordinate={{ ...markerData }} />
+                <Circle center={{ ...markerData }} radius={50} strokeColor='#f00' fillColor='rgba(255,0,0,0.2)' />
+              </React.Fragment>
+            ))}
           </MapView>
         )}
-      </Box>
+      </Center>
 
       <Center flexDir={'row'} height={12} justifyContent='center' alignItems={'center'}>
-        {currentLocation && (
-          <>
-            <Spacer />
-            <Text>緯度{currentLocation.latitude}</Text>
-            <Spacer />
-            <Text>経度{currentLocation.longitude}</Text>
-            <Spacer />
-          </>
-        )}
+        <VStack>
+          {!currentLocation && <Spinner />}
+          <Text>緯度 : {currentLocation?.latitude || '---'}</Text>
+          <Text>経度 : {currentLocation?.longitude || '---'}</Text>
+        </VStack>
       </Center>
     </Box>
   );

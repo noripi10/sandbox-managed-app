@@ -28,11 +28,10 @@ type NestMenuProp = {
   // eslint-disable-next-line no-undef
   children: JSX.Element[];
 };
-export const NestMenu: VFC<NestMenuProp> & { Item: VFC<NestChildProp> } = ({
-  viewProps,
-  onItemClick,
-  children,
-}: NestMenuProp) => {
+
+type NestMenuWithItemProp = VFC<NestMenuProp> & { Item: VFC<NestChildProp> };
+
+export const NestMenu: NestMenuWithItemProp = ({ viewProps, onItemClick, children }: NestMenuProp) => {
   return (
     <Box {...viewProps}>
       {/* NestItemを展開 */}
