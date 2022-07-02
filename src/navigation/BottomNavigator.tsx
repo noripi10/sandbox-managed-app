@@ -6,6 +6,7 @@ import {
   GraphqlScreen,
   LocationScreen,
   NestComponentScreen,
+  SimpleFlatListScreen,
   SVGScreen,
   WebGLScreen,
   WelcomScreen,
@@ -13,6 +14,7 @@ import {
 
 export type BottomNavigationParamList = {
   AnimationFlatList: undefined;
+  SimpleFlatList: undefined;
   NestComponent: undefined;
   WebGL: undefined;
   SVG: undefined;
@@ -45,6 +47,7 @@ export const BottomNavigator = () => {
       <Bottom.Screen name='WebGL' component={WebGLScreen} />
       <Bottom.Screen name='NestComponent' component={NestComponentScreen} />
       <Bottom.Screen name='AnimationFlatList' component={AnimationFlatListScreen} />
+      <Bottom.Screen name='SimpleFlatList' component={SimpleFlatListScreen} />
       <Bottom.Screen name='Location' component={LocationScreen} />
     </Bottom.Navigator>
   );

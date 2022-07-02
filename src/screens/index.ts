@@ -5,3 +5,4 @@ export { default as SVGScreen } from './SVGScreen';
 export { default as LocationScreen } from './LocationScreen';
 export { default as GraphqlScreen } from './GraphqlScreen';
 export { default as WelcomScreen } from './WelcomScreen';
+export { default as SimpleFlatListScreen } from './SimpleFlatListScreen';
