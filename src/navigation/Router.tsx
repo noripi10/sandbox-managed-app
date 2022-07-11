@@ -26,6 +26,7 @@ export const Router: FC = () => {
 
   const welcomAnimatedValue = useSharedValue(0);
 
+  // Layout後SplashScreen.Hide + animated.value change(rotation)
   const onLayoutWelcomScreen = () => {
     HideSplashScreen().then(() => {
       welcomAnimatedValue.value = withTiming(1, { duration: 3000 });
