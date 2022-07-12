@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 
-import { Box, Center, Heading, ScrollView, Spinner, Text } from 'native-base';
+import { Box, Button, Center, Heading, ScrollView, Spinner, Text } from 'native-base';
 
 import { useGetUsersQuery } from '@/types/graphql/graphql';
 
 const GraphqlScreen: FC = () => {
-  const { data, error, loading } = useGetUsersQuery();
+  const { data, error, loading, refetch } = useGetUsersQuery();
 
   if (error) {
     return (
@@ -24,6 +24,9 @@ const GraphqlScreen: FC = () => {
   return (
     <Box flex={1} safeArea>
       <Heading>GraphqlScreen</Heading>
+      <Button variant={'ghost'} onPress={() => refetch()} _pressed={{ backgroundColor: 'gray.200' }}>
+        Refetch
+      </Button>
       <ScrollView>
         <Box px={4}>{/* <Button onPress={getSampleData}>getSampleData</Button> */}</Box>
         <Box flex={1}>

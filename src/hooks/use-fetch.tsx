@@ -20,7 +20,14 @@ const useFetch = (key: string) => {
     });
   }
 
-  return { data: cacheData };
+  const refetch = () => {
+    fetcher(key).then((d) => {
+      console.info('refetch', d);
+      data.set(key, d);
+    });
+  };
+
+  return { data: cacheData, refetch };
 };
 
 type DataType = typeof exampleData;

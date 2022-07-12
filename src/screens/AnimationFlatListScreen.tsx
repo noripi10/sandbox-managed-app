@@ -1,5 +1,6 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   FlatListProps,
@@ -12,7 +13,7 @@ import {
   View,
 } from 'react-native';
 
-import { Box } from 'native-base';
+import { Box, IconButton } from 'native-base';
 
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -186,6 +187,8 @@ const RenderItem: FC<{ item: ItemProp; index: number; y: SharedValue<number> }> 
 };
 
 const AnimationFlatListScreen: FC = () => {
+  const flatList = useRef<FlatList>(null);
+
   const y = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler((event: NativeScrollEvent) => {
@@ -196,12 +199,23 @@ const AnimationFlatListScreen: FC = () => {
     <SafeAreaView style={styles.container}>
       <Box>
         <AnimatedFlatlist
+          ref={flatList}
+          initialNumToRender={20}
           indicatorStyle={'black'}
           contentContainerStyle={{ width: WIDTH }}
           data={list}
           keyExtractor={(item) => item.name + item.address}
           renderItem={({ item, index }) => <RenderItem item={item} index={index} y={y} />}
           onScroll={scrollHandler}
+        />
+      </Box>
+      <Box position={'absolute'} w='full' bottom={6} alignItems='center'>
+        <IconButton
+          icon={<Ionicons name='play-circle' size={64} color='#cf4c4c' />}
+          onPress={() => {
+            Alert.alert('click!!!');
+            flatList.current?.scrollToIndex({ animated: true, index: 20 });
+          }}
         />
       </Box>
     </SafeAreaView>

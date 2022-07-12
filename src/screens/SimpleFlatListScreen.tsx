@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { FlatList } from 'react-native';
 
-import { Box, Center, HStack, Image, Spinner, Text } from 'native-base';
+import { Box, Center, Heading, HStack, Image, Spinner, Text } from 'native-base';
 
 import { Ionicons } from '@expo/vector-icons';
 import { QueryFunctionContext, useInfiniteQuery } from 'react-query';
@@ -22,7 +22,7 @@ const SimpleFlatListScreen: FC = () => {
   return (
     <Box flex={1} safeArea>
       <Box flex={1} padding={2}>
-        <Text>SimpleFlatListScreen</Text>
+        <Heading>SimpleFlatListScreen</Heading>
         <Box h={'56'} position='relative'>
           <Text>https://api.rawg.io/docs/#operation/games_list</Text>
 

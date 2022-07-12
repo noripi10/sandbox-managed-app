@@ -9,7 +9,8 @@
       "request": "launch",
       "type": "reactnative",
       "cwd": "${workspaceFolder}",
-      "platform": "exponent"
+      "platform": "exponent",
+      "expoHostType": "lan"
     }
   ]
 }

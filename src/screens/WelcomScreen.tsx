@@ -1,8 +1,8 @@
-import React, { Suspense, useContext } from 'react';
+import React, { useContext } from 'react';
 
 import { Box, Heading, Text, VStack } from 'native-base';
 
-import { FetchData } from '@/components/FechData';
+import { FetchContainer } from '@/components/FetchData';
 import { NotificationContext } from '@/providers/NotificationProvider';
 
 type Props = unknown;
@@ -17,9 +17,8 @@ const WelcomScreen: React.FC<Props> = () => {
         <Text>{pushToken}</Text>
       </VStack>
       <Box m={'4'} />
-      <Suspense fallback={<Text>loading...</Text>}>
-        <FetchData />
-      </Suspense>
+
+      <FetchContainer />
     </Box>
   );
 };

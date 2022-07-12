@@ -1,4 +1,13 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useState, useRef } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+  useRef,
+  forwardRef,
+} from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 
 import { Box, Button, Center, Flex, HStack, Text } from 'native-base';
@@ -16,7 +25,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   useDerivedValue,
-  SharedValue,
 } from 'react-native-reanimated';
 import { BoxGeometry, GridHelper, PerspectiveCamera, PointLight, Scene } from 'three';
 import { MeshLambertMaterial } from 'three/src/materials/MeshLambertMaterial';
@@ -41,10 +49,8 @@ const WebGlScreen: React.FC<Props> = () => {
   const [stateY, setStateY] = useState(0);
   const [snapshot, setSnapshot] = useState<GLSnapshot>();
 
-  const x = useSharedValue(0);
-  const y = useSharedValue(0);
-
   const glRef = useRef<GLView>(null);
+  const sitckRef = useRef<StickRef>();
 
   const move = useCallback(
     (stickX: number, stickY: number) => {
@@ -101,7 +107,6 @@ const WebGlScreen: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line no-undef
     let timerId: NodeJS.Timer;
 
     if (Camera && isMove) {
@@ -159,24 +164,43 @@ const WebGlScreen: React.FC<Props> = () => {
         )}
       </Box>
 
-      <Stick {...{ x, y, setStateX, setStateY, move }} />
+      <Center>
+        <Button
+          onPress={() => {
+            console.info({
+              x: sitckRef.current?.getX(),
+              y: sitckRef.current?.getY(),
+            });
+          }}
+        >
+          Get X/Y
+        </Button>
+      </Center>
+
+      <Stick {...{ setStateX, setStateY, move }} />
     </Flex>
   );
 };
 
-const Stick = ({
-  x,
-  y,
-  setStateX,
-  setStateY,
-  move,
-}: {
-  x: SharedValue<number>;
-  y: SharedValue<number>;
+type StickRef =
+  | {
+      getX: () => number;
+      getY: () => number;
+    }
+  | undefined;
+
+type StickProps = {
   setStateX: Dispatch<SetStateAction<number>>;
   setStateY: Dispatch<SetStateAction<number>>;
   move: (resultX: number, resutlY: number) => void;
-}) => {
+};
+
+const Stick = forwardRef<StickRef, StickProps>((props, ref) => {
+  const { setStateX, setStateY, move } = props;
+
+  const x = useSharedValue(0);
+  const y = useSharedValue(0);
+
   const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, { startX: number; startY: number }>({
     onStart: (_, ctx) => {
       ctx.startX = x.value;
@@ -215,6 +239,11 @@ const Stick = ({
     runOnJS(recordResult)(x.value, y.value);
   });
 
+  useImperativeHandle(ref, () => ({
+    getX: () => x.value,
+    getY: () => y.value,
+  }));
+
   return (
     <Center flex={1} m={1} bgColor='red'>
       <Text>StickPosition</Text>
@@ -230,7 +259,7 @@ const Stick = ({
       </View>
     </Center>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
