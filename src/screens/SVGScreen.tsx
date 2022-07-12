@@ -3,7 +3,12 @@ import { RefreshControl } from 'react-native';
 
 import { Box, ScrollView, Text } from 'native-base';
 
-import Animated, { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 import { useGlobalTheme } from '@/hooks/useGlobalTheme';
 
@@ -21,8 +26,9 @@ const SVGScreen: React.FC<Props> = () => {
     scrollY.value = e.contentOffset.y;
   });
   const scrollAnimated = useAnimatedStyle(() => {
+    const translateX = interpolate(scrollY.value, [0, 200], [0, 60]);
     return {
-      transform: [{ translateX: scrollY.value }],
+      transform: [{ translateX }],
     };
   });
 
@@ -43,14 +49,14 @@ const SVGScreen: React.FC<Props> = () => {
       scrollEventThrottle={16}
     >
       <Box position={'relative'}>
-        <Box bgColor={'#bb6060'} position='absolute' top={-300} left={0} right={0} height={420} />
+        <Box bgColor={'#bb6060'} position='absolute' top={-400} left={0} right={0} height={500} />
         <Animated.View style={[scrollAnimated]}>
           <Wave
             fill={'#bb6060'}
             height={280}
             width={'150%'}
             viewBox={'0 0 1440 320'}
-            style={{ position: 'absolute', top: 0 }}
+            style={{ position: 'absolute', top: 0, left: -30 }}
           />
         </Animated.View>
         <Box position={'absolute'} top={16} left={8}>

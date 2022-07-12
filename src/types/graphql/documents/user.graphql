@@ -10,3 +10,11 @@ query getUsers {
     }
   }
 }
+
+mutation createUser($email: String!, $name: String!) {
+  createUser(email: $email, name: $name) {
+    id
+    email
+    name
+  }
+}
