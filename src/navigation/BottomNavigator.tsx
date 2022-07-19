@@ -6,9 +6,10 @@ import {
   GraphqlScreen,
   LocationScreen,
   NestComponentScreen,
+  QRGenerateScreen,
   SimpleFlatListScreen,
   SVGScreen,
-  WebGLScreen,
+  WebGlScreen,
   WelcomScreen,
 } from '@/screens';
 
@@ -21,6 +22,7 @@ export type BottomNavigationParamList = {
   Location: undefined;
   Graphql: undefined;
   Welcome: undefined;
+  QR: undefined;
 };
 
 const Bottom = createBottomTabNavigator<BottomNavigationParamList>();
@@ -44,11 +46,12 @@ export const BottomNavigator = () => {
       <Bottom.Screen name='Welcome' component={WelcomScreen} />
       <Bottom.Screen name='Graphql' component={GraphqlScreen} />
       <Bottom.Screen name='SVG' component={SVGScreen} />
-      <Bottom.Screen name='WebGL' component={WebGLScreen} />
+      <Bottom.Screen name='WebGL' component={WebGlScreen} />
       <Bottom.Screen name='NestComponent' component={NestComponentScreen} />
       <Bottom.Screen name='AnimationFlatList' component={AnimationFlatListScreen} />
       <Bottom.Screen name='SimpleFlatList' component={SimpleFlatListScreen} />
       <Bottom.Screen name='Location' component={LocationScreen} />
+      <Bottom.Screen name='QR' component={QRGenerateScreen} />
     </Bottom.Navigator>
   );
 };

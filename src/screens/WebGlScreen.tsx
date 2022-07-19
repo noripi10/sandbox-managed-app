@@ -59,6 +59,8 @@ const WebGlScreen: React.FC<Props> = () => {
           setMove(false);
           return;
         }
+        setStateX(stickX);
+        setStateY(stickY);
         setMove(true);
       }
     },
@@ -93,8 +95,9 @@ const WebGlScreen: React.FC<Props> = () => {
     camera.position.set(0, 2, 8);
     setCamera(camera);
 
+    let animationId = 0;
     const animate = () => {
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
 
       cube.rotation.x += 0.01;
       cube.rotation.y += 0.01;
@@ -102,29 +105,33 @@ const WebGlScreen: React.FC<Props> = () => {
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };
-
     animate();
-  }, []);
-
-  useEffect(() => {
-    let timerId: NodeJS.Timer;
-
-    if (Camera && isMove) {
-      timerId = setInterval(() => {
-        if (stateX < 0) Camera.position.x -= 0.2;
-        if (stateX > 0) Camera.position.x += 0.2;
-
-        if (stateY < 0) Camera.position.z -= 0.2;
-        if (stateY > 0) Camera.position.z += 0.2;
-      }, 60);
-    } else {
-      // clearInterval(timerId);
-    }
 
     return () => {
-      clearInterval(timerId);
+      cancelAnimationFrame(animationId);
     };
+  }, []);
+
+  const animateWithStickRef = useRef<number | null>(null);
+  const animateWithStick = useCallback(() => {
+    animateWithStickRef.current = requestAnimationFrame(animateWithStick);
+    if (Camera && isMove) {
+      if (stateX < 0) Camera.position.x -= 0.1;
+      if (stateX > 0) Camera.position.x += 0.1;
+
+      if (stateY < 0) Camera.position.z -= 0.1;
+      if (stateY > 0) Camera.position.z += 0.1;
+    }
   }, [Camera, isMove, stateX, stateY]);
+
+  useEffect(() => {
+    animateWithStick();
+
+    // Stickを動かすとstateX, stateYが変動するたびに生成されるのでクリアしておく
+    return () => {
+      cancelAnimationFrame(animateWithStickRef.current ?? -1);
+    };
+  }, [animateWithStick]);
 
   useEffect(() => {
     navigation.addListener('blur', () => setActive(false));
@@ -196,7 +203,7 @@ type StickProps = {
 };
 
 const Stick = forwardRef<StickRef, StickProps>((props, ref) => {
-  const { setStateX, setStateY, move } = props;
+  const { move } = props;
 
   const x = useSharedValue(0);
   const y = useSharedValue(0);
@@ -229,9 +236,6 @@ const Stick = forwardRef<StickRef, StickProps>((props, ref) => {
   });
 
   const recordResult = (resultX: number, resultY: number) => {
-    // console.info({ resultX, resultY });
-    setStateX(resultX);
-    setStateY(resultY);
     move(resultX, resultY);
   };
 
